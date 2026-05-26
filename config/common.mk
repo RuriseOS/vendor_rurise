@@ -54,13 +54,17 @@ PRODUCT_COPY_FILES += \
     vendor/lineage/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
     vendor/lineage/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions
 
+# addon.d is only needed to keep GApps installed from recovery
+ifneq ($(WITH_GMS),true)
 PRODUCT_PACKAGES += \
     50-lineage.sh
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/addon.d/50-lineage.sh
+endif
 
 ifneq ($(strip $(AB_OTA_PARTITIONS) $(AB_OTA_POSTINSTALL_CONFIG)),)
+ifneq ($(WITH_GMS),true)
 PRODUCT_COPY_FILES += \
     vendor/lineage/prebuilt/common/bin/backuptool_ab.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.sh \
     vendor/lineage/prebuilt/common/bin/backuptool_ab.functions:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.functions \
@@ -70,6 +74,7 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/bin/backuptool_ab.sh \
     system/bin/backuptool_ab.functions \
     system/bin/backuptool_postinstall.sh
+endif
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -142,9 +147,11 @@ PRODUCT_PACKAGES += \
 
 # Lineage packages
 ifeq ($(PRODUCT_IS_ATV),)
+ifneq ($(WITH_GMS),true)
 PRODUCT_PACKAGES += \
     ExactCalculator \
     Jelly
+endif
 endif
 
 ifeq ($(PRODUCT_IS_AUTOMOTIVE),)
@@ -162,8 +169,12 @@ PRODUCT_COPY_FILES += \
 
 # Config
 PRODUCT_PACKAGES += \
-    SimpleDeviceConfig \
     SimpleSettingsConfig
+
+ifneq ($(WITH_GMS),true)
+PRODUCT_PACKAGES += \
+    SimpleDeviceConfig
+endif
 
 # Disable default frame rate limit for games
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -275,9 +286,11 @@ endif
 $(call inherit-product, vendor/lineage/audio/audio.mk)
 
 # SetupWizard
+ifneq ($(WITH_GMS),true)
 PRODUCT_PRODUCT_PROPERTIES += \
     setupwizard.theme=glif_expressive \
     setupwizard.feature.day_night_mode_enabled=true
+endif
 
 PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += vendor/lineage/overlay/no-rro
 PRODUCT_PACKAGE_OVERLAYS += \
@@ -285,7 +298,6 @@ PRODUCT_PACKAGE_OVERLAYS += \
     vendor/lineage/overlay/no-rro
 
 PRODUCT_PACKAGES += \
-    DocumentsUIOverlay \
     LineageFrameworksOverlay \
     NetworkStackOverlay \
     PermissionControllerOverlay
@@ -310,5 +322,10 @@ include vendor/lineage/config/version.mk
 
 -include vendor/lineage-priv/keys/keys.mk
 
+ifeq ($(WITH_GMS),true)
+include vendor/lineage/config/gms.mk
+else
+include vendor/lineage/config/vanilla.mk
+endif
+
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
--include vendor/lineage/config/partner_gms.mk

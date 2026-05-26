@@ -14,3 +14,8 @@ ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 endif
 
 include vendor/lineage/config/BoardConfigSoong.mk
+
+# Pixel GMS
+ifeq ($(WITH_GMS),true)
+    -include vendor/pixel/gms/products/board.mk
+endif
