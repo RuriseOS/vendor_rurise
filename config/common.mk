@@ -168,8 +168,12 @@ PRODUCT_COPY_FILES += \
 
 # Config
 PRODUCT_PACKAGES += \
-    SimpleDeviceConfig \
     SimpleSettingsConfig
+
+ifneq ($(WITH_GMS),true)
+PRODUCT_PACKAGES += \
+    SimpleDeviceConfig
+endif
 
 # Extra tools in Lineage
 PRODUCT_PACKAGES += \
@@ -271,9 +275,11 @@ endif
 $(call inherit-product, vendor/lineage/audio/audio.mk)
 
 # SetupWizard
+ifneq ($(WITH_GMS),true)
 PRODUCT_PRODUCT_PROPERTIES += \
     setupwizard.theme=glif_v4 \
     setupwizard.feature.day_night_mode_enabled=true
+endif
 
 PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += vendor/lineage/overlay/no-rro
 PRODUCT_PACKAGE_OVERLAYS += \
@@ -304,6 +310,17 @@ PRODUCT_EXTRA_RECOVERY_KEYS += \
 include vendor/lineage/config/version.mk
 
 -include vendor/lineage-priv/keys/keys.mk
+
+ifeq ($(WITH_GMS),true)
+include vendor/lineage/config/gms.mk
+PRODUCT_PACKAGES += \
+    SettingsOverlayGMS \
+    SettingsProviderOverlayGMS
+else
+PRODUCT_PACKAGES += \
+    SettingsOverlayVanilla \
+    SettingsProviderOverlayVanilla
+endif
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
 -include vendor/lineage/config/partner_gms.mk
