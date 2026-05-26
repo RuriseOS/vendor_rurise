@@ -4,6 +4,6 @@
 //
 
 runtime_resource_overlay {
-    name: "DocumentsUIOverlay",
+    name: "DocumentsUIOverlayGMS",
     product_specific: true,
 }

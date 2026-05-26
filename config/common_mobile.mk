@@ -9,16 +9,22 @@ include vendor/lineage/config/aosp_audio.mk
 include vendor/lineage/config/lineage_audio.mk
 
 # Default notification/alarm sounds
+ifneq ($(WITH_GMS),true)
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.config.notification_sound=Argon.ogg \
     ro.config.alarm_alert=Hassium.ogg
+endif
 
 # Apps
 PRODUCT_PACKAGES += \
     AvatarPicker \
-    Backgrounds \
+    Backgrounds
+
+ifneq ($(WITH_GMS),true)
+PRODUCT_PACKAGES += \
     Glimpse \
     LatinIME
+endif
 
 ifeq ($(PRODUCT_TYPE), go)
 PRODUCT_PACKAGES += \
